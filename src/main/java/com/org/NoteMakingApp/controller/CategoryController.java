@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.NoteMakingApp.Dto.CategoryDto;
+import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
+import com.org.NoteMakingApp.ExceptionHandler.GenericExceptionHandler;
+import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.model.Category;
 import com.org.NoteMakingApp.model.CategoryResponse;
 import com.org.NoteMakingApp.service.CategoryService;
@@ -30,7 +33,8 @@ public class CategoryController {
 	private CategoryService categoryService;
 
 	@PostMapping("/save-category")
-	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto)
+			throws AlreadyExists, ResourceNotFoundException {
 		boolean saveCategory = categoryService.saveCategory(categoryDto);
 		if (saveCategory) {
 			return GenericResponceBuilder.builder("saved Successfully", HttpStatus.CREATED);
@@ -56,17 +60,17 @@ public class CategoryController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> CategoryById(@PathVariable int id) {
+	public ResponseEntity<?> CategoryById(@PathVariable int id) throws ResourceNotFoundException {
 		CategoryDto category = categoryService.getCategoryById(id);
 		if (ObjectUtils.isEmpty(category)) {
-			return GenericResponceBuilder.builder("No Content Present In this Id " + id, HttpStatus.NOT_FOUND);
-		} else {
-			return GenericResponceBuilder.builder("Success", category, HttpStatus.OK);
+			return GenericResponceBuilder.builder("Something Went Wrong In Server " + id,
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		return GenericResponceBuilder.builder("Success", category, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteCategoryById(@PathVariable int id) {
+	public ResponseEntity<?> deleteCategoryById(@PathVariable int id) throws ResourceNotFoundException {
 		boolean isDeleted = categoryService.deleteCategoryById(id);
 		if (isDeleted) {
 			return GenericResponceBuilder.builder("Deleted", HttpStatus.NO_CONTENT);
