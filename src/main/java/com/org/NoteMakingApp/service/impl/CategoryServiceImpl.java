@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.org.NoteMakingApp.Dto.CategoryDto;
+import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
+import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
 import com.org.NoteMakingApp.model.Category;
 import com.org.NoteMakingApp.model.CategoryResponse;
@@ -26,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
 	private ModelMapper mapper;
 
 	@Override
-	public boolean saveCategory(CategoryDto categoryDto) {
+	public boolean saveCategory(CategoryDto categoryDto) throws AlreadyExists, ResourceNotFoundException {
 		Category category = mapper.map(categoryDto, Category.class);
 		if (ObjectUtils.isEmpty(category.getId())) {
 			category.setDeleted(false);
@@ -35,18 +37,21 @@ public class CategoryServiceImpl implements CategoryService {
 		} else {
 			updateCatgory(category);
 		}
-		Category categoryObj = categoryRepo.save(category);
-		if (!ObjectUtils.isEmpty(categoryObj)) {
-			return true;
+		Category findByName = categoryRepo.findByName(category.getName());
+		if (ObjectUtils.isEmpty(findByName)) {
+			Category categoryObj = categoryRepo.save(category);
+			if (!ObjectUtils.isEmpty(categoryObj)) {
+				return true;
+			}
 		}
-		return false;
+		throw new AlreadyExists("Category Already Present");
 	}
 
-	private void updateCatgory(Category category) {
+	private void updateCatgory(Category category) throws ResourceNotFoundException {
 
-		Optional<Category> findById = categoryRepo.findById(category.getId());
-		if (findById.isPresent()) {
-			Category existCategory = findById.get();
+		Category existCategory = categoryRepo.findById(category.getId()).orElseThrow(
+				() -> new ResourceNotFoundException("Category With id '" + category.getId() + "' Not Found"));
+		if (!ObjectUtils.isEmpty(category)) {
 			category.setActive(existCategory.isActive());
 			category.setUpdate_by(1);
 			category.setUpdate_on(new Date());
@@ -77,16 +82,16 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public CategoryDto getCategoryById(int id) {
+	public CategoryDto getCategoryById(int id) throws ResourceNotFoundException {
 		Category category = categoryRepo.findByIdAndIsDeletedFalse(id);
-		if (!ObjectUtils.isEmpty(category)) {
-			return mapper.map(category, CategoryDto.class);
+		if (ObjectUtils.isEmpty(category)) {
+			throw new ResourceNotFoundException("Category With id '" + id + "' Not Found");
 		}
-		return null;
+		return mapper.map(category, CategoryDto.class);
 	}
 
 	@Override
-	public boolean deleteCategoryById(int id) {
+	public boolean deleteCategoryById(int id) throws ResourceNotFoundException {
 		Optional<Category> category = categoryRepo.findById(id);
 		if (category.isPresent()) {
 			Category category2 = category.get();
@@ -94,7 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
 			categoryRepo.save(category2);
 			return true;
 		}
-		return false;
+		throw new ResourceNotFoundException("Category With id '" + id + "' Not Found");
 	}
 
 }
