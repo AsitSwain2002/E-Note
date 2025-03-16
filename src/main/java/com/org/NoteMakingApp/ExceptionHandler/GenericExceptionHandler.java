@@ -27,4 +27,24 @@ public class GenericExceptionHandler {
 		data.setTime(new Date().toLocaleString());
 		return new ResponseEntity<>(data, HttpStatus.CONFLICT);
 	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public static ResponseEntity<?> illegalArgumentException(IllegalArgumentException e) {
+		ExceptionData data = new ExceptionData();
+		data.setMessage(e.getMessage());
+		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
+		data.setTime(new Date().toLocaleString());
+		return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(CategoryValidationEcxception.class)
+	public static ResponseEntity<?> CategoryValidationEcxception(CategoryValidationEcxception e) {
+		ExceptionData data = new ExceptionData();
+		data.setMessage(e.getMessage());
+		data.setMessages(e.getError());
+		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
+		data.setTime(new Date().toLocaleString());
+		return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+	}
+
 }
