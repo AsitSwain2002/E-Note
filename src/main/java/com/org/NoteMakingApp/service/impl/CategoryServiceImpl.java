@@ -14,6 +14,7 @@ import com.org.NoteMakingApp.Dto.CategoryDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
+import com.org.NoteMakingApp.Validation.CategoryValidation;
 import com.org.NoteMakingApp.model.Category;
 import com.org.NoteMakingApp.model.CategoryResponse;
 import com.org.NoteMakingApp.service.CategoryService;
@@ -26,16 +27,21 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Autowired
 	private ModelMapper mapper;
+	@Autowired
+	private CategoryValidation categoryValidation;
 
 	@Override
 	public boolean saveCategory(CategoryDto categoryDto) throws AlreadyExists, ResourceNotFoundException {
+		categoryValidation.validateCategory(categoryDto);
 		Category category = mapper.map(categoryDto, Category.class);
-
 //		System.out.println();
 //		System.out.println();
 //		System.out.println(category.getId());
 //		System.out.println();
 		if (ObjectUtils.isEmpty(category.getId()) || category.getId() == 0) {
+		System.out.println();
+		System.out.println(category.getId());
+		System.out.println();
 			category.setDeleted(false);
 			category.setCreated_on(new Date());
 			category.setCreated_by(1);
@@ -75,11 +81,6 @@ public class CategoryServiceImpl implements CategoryService {
 		return findAll.stream().map((ele) -> mapper.map(ele, CategoryDto.class)).collect(Collectors.toList());
 	}
 
-//	@Override
-//	public boolean updateCategory(CategoryDto categoryDto, int id) {
-//
-//		return false;
-//	}
 
 	@Override
 	public List<CategoryResponse> allActiveCategory() {
