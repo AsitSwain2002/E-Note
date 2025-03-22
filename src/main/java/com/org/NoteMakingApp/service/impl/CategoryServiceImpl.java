@@ -34,25 +34,27 @@ public class CategoryServiceImpl implements CategoryService {
 	public boolean saveCategory(CategoryDto categoryDto) throws AlreadyExists, ResourceNotFoundException {
 		categoryValidation.validateCategory(categoryDto);
 		Category category = mapper.map(categoryDto, Category.class);
-		System.out.println();
-		System.out.println(category.getId());
-		System.out.println();
-
-		if (category.getId() == 0) {
+//		System.out.println();
+//		System.out.println();
+//		System.out.println(category.getId());
+//		System.out.println();
+		if (ObjectUtils.isEmpty(category.getId()) || category.getId() == 0) {
 			category.setDeleted(false);
 			category.setCreated_on(new Date());
 			category.setCreated_by(1);
+			Category findByName = categoryRepo.findByName(category.getName());
+			if (!ObjectUtils.isEmpty(findByName)) {
+				throw new AlreadyExists("Category Already Present");
+			}
 		} else {
 			updateCatgory(category);
 		}
-		Category findByName = categoryRepo.findByName(category.getName());
-		if (ObjectUtils.isEmpty(findByName)) {
-			Category categoryObj = categoryRepo.save(category);
-			if (!ObjectUtils.isEmpty(categoryObj)) {
-				return true;
-			}
+		Category categoryObj = categoryRepo.save(category);
+		if (!ObjectUtils.isEmpty(categoryObj)) {
+			return true;
+		} else {
+			return false;
 		}
-		throw new AlreadyExists("Category Already Present");
 	}
 
 	private void updateCatgory(Category category) throws ResourceNotFoundException {
