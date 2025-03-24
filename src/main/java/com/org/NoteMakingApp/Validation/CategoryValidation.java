@@ -21,7 +21,7 @@ public class CategoryValidation {
 		} else {
 
 			// Name Validation
-			if (ObjectUtils.isEmpty(category.getName())) {
+			if (!ObjectUtils.isEmpty(category.getName())) {
 				if (category.getName().length() < 10) {
 					error.put("name", "Name Must Greater Than 10");
 				}

@@ -34,10 +34,6 @@ public class CategoryServiceImpl implements CategoryService {
 	public boolean saveCategory(CategoryDto categoryDto) throws AlreadyExists, ResourceNotFoundException {
 		categoryValidation.validateCategory(categoryDto);
 		Category category = mapper.map(categoryDto, Category.class);
-//		System.out.println();
-//		System.out.println();
-//		System.out.println(category.getId());
-//		System.out.println();
 		if (ObjectUtils.isEmpty(category.getId()) || category.getId() == 0) {
 			category.setDeleted(false);
 			category.setCreated_on(new Date());
@@ -77,7 +73,6 @@ public class CategoryServiceImpl implements CategoryService {
 		List<Category> findAll = categoryRepo.findByActiveTrueAndIsDeletedFalse();
 		return findAll.stream().map((ele) -> mapper.map(ele, CategoryDto.class)).collect(Collectors.toList());
 	}
-
 
 	@Override
 	public List<CategoryResponse> allActiveCategory() {
