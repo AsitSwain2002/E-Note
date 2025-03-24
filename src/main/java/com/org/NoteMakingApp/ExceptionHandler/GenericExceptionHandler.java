@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.org.NoteMakingApp.util.GenericResponceBuilder;
+
 @RestControllerAdvice
 public class GenericExceptionHandler {
 
@@ -16,7 +18,7 @@ public class GenericExceptionHandler {
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.NOT_FOUND.value());
 		data.setTime(new Date().toLocaleString());
-		return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(AlreadyExists.class)
@@ -25,7 +27,7 @@ public class GenericExceptionHandler {
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.CONFLICT.value());
 		data.setTime(new Date().toLocaleString());
-		return new ResponseEntity<>(data, HttpStatus.CONFLICT);
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
@@ -34,7 +36,7 @@ public class GenericExceptionHandler {
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
 		data.setTime(new Date().toLocaleString());
-		return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(CategoryValidationEcxception.class)
@@ -44,7 +46,7 @@ public class GenericExceptionHandler {
 		data.setMessages(e.getError());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
 		data.setTime(new Date().toLocaleString());
-		return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
 }

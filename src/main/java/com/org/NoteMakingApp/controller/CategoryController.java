@@ -37,9 +37,9 @@ public class CategoryController {
 			throws AlreadyExists, ResourceNotFoundException {
 		boolean saveCategory = categoryService.saveCategory(categoryDto);
 		if (saveCategory) {
-			return GenericResponceBuilder.builder("saved Successfully", HttpStatus.CREATED);
+			return GenericResponceBuilder.withOutData("saved Successfully", HttpStatus.CREATED);
 		} else {
-			return GenericResponceBuilder.builder("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+			return GenericResponceBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class CategoryController {
 	public ResponseEntity<?> getAllCategory() {
 		List<CategoryDto> findAllCategories = categoryService.findAllCategories();
 		if (!CollectionUtils.isEmpty(findAllCategories)) {
-			return GenericResponceBuilder.builder("Fetched", findAllCategories, HttpStatus.OK);
+			return GenericResponceBuilder.withData("Fetched", findAllCategories, HttpStatus.OK);
 		} else {
 			return ResponseEntity.noContent().build();
 		}
@@ -56,26 +56,26 @@ public class CategoryController {
 	@GetMapping("/getAllCategory/active")
 	public ResponseEntity<?> getAllActiveCategory() {
 		List<CategoryResponse> allCategory = categoryService.allActiveCategory();
-		return GenericResponceBuilder.builder("Fetched", allCategory, HttpStatus.OK);
+		return GenericResponceBuilder.withData("Fetched", allCategory, HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> CategoryById(@PathVariable int id) throws ResourceNotFoundException {
 		CategoryDto category = categoryService.getCategoryById(id);
 		if (ObjectUtils.isEmpty(category)) {
-			return GenericResponceBuilder.builder("Something Went Wrong In Server " + id,
+			return GenericResponceBuilder.withOutData("Something Went Wrong In Server " + id,
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return GenericResponceBuilder.builder("Success", category, HttpStatus.OK);
+		return GenericResponceBuilder.withData("Success", category, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteCategoryById(@PathVariable int id) throws ResourceNotFoundException {
 		boolean isDeleted = categoryService.deleteCategoryById(id);
 		if (isDeleted) {
-			return GenericResponceBuilder.builder("Deleted", HttpStatus.NO_CONTENT);
+			return GenericResponceBuilder.withOutData("Deleted", HttpStatus.NO_CONTENT);
 		} else {
-			return GenericResponceBuilder.builder("Not Deleted", HttpStatus.INTERNAL_SERVER_ERROR);
+			return GenericResponceBuilder.withOutData("Not Deleted", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
