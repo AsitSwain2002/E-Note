@@ -21,7 +21,6 @@ import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.GenericExceptionHandler;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.model.Category;
-import com.org.NoteMakingApp.model.CategoryResponse;
 import com.org.NoteMakingApp.service.CategoryService;
 import com.org.NoteMakingApp.util.GenericResponceBuilder;
 
@@ -55,7 +54,7 @@ public class CategoryController {
 
 	@GetMapping("/getAllCategory/active")
 	public ResponseEntity<?> getAllActiveCategory() {
-		List<CategoryResponse> allCategory = categoryService.allActiveCategory();
+		List<CategoryDto> allCategory = categoryService.allActiveCategory();
 		return GenericResponceBuilder.builder("Fetched", allCategory, HttpStatus.OK);
 	}
 

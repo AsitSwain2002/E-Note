@@ -16,7 +16,6 @@ import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
 import com.org.NoteMakingApp.Validation.CategoryValidation;
 import com.org.NoteMakingApp.model.Category;
-import com.org.NoteMakingApp.model.CategoryResponse;
 import com.org.NoteMakingApp.service.CategoryService;
 
 @Service
@@ -78,12 +77,11 @@ public class CategoryServiceImpl implements CategoryService {
 		return findAll.stream().map((ele) -> mapper.map(ele, CategoryDto.class)).collect(Collectors.toList());
 	}
 
-
 	@Override
-	public List<CategoryResponse> allActiveCategory() {
+	public List<CategoryDto> allActiveCategory() {
 
 		List<Category> findByActiveTrue = categoryRepo.findByActiveTrue();
-		return findByActiveTrue.stream().map(e -> mapper.map(e, CategoryResponse.class)).collect(Collectors.toList());
+		return findByActiveTrue.stream().map(e -> mapper.map(e, CategoryDto.class)).collect(Collectors.toList());
 	}
 
 	@Override
