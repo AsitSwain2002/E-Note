@@ -15,11 +15,21 @@ import lombok.Setter;
 public class NotesDto {
 
 	private Integer id;
-	private String name;
+	private String title;
 	private String description;
 	private CategoryDto category;
 	private int created_by;
 	private Date created_on;
 	private int update_by;
 	private Date update_on;
+	private boolean isDeleted;
+	
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	public static class CategoryDto{
+		private Integer id;
+		private String name;
+		
+	}
 }

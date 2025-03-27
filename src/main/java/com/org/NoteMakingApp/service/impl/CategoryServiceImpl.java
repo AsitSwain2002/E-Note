@@ -58,8 +58,8 @@ public class CategoryServiceImpl implements CategoryService {
 				() -> new ResourceNotFoundException("Category With id '" + category.getId() + "' Not Found"));
 		if (!ObjectUtils.isEmpty(category)) {
 			category.setActive(existCategory.isActive());
-			category.setUpdate_by(1);
-			category.setUpdate_on(new Date());
+//			category.setUpdate_by(1);
+//			category.setUpdate_on(new Date());
 //			category.setDescription(existCategory.getDescription());
 //			category.setName(existCategory.getName());
 			category.setCreated_on(existCategory.getCreated_on());
