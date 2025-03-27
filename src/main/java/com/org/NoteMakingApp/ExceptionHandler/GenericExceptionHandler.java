@@ -49,4 +49,14 @@ public class GenericExceptionHandler {
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(NoteValidationException.class)
+	public static ResponseEntity<?> noteValidationException(NoteValidationException e) {
+		ExceptionData data = new ExceptionData();
+		data.setMessage(e.getMessage());
+		data.setMessages(e.getErrorRes());
+		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
+		data.setTime(new Date().toLocaleString());
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
+	}
+
 }
