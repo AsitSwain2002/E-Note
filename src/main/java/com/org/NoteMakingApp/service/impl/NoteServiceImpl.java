@@ -11,9 +11,11 @@ import org.springframework.util.ObjectUtils;
 import com.org.NoteMakingApp.Dto.CategoryDto;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
+import com.org.NoteMakingApp.ExceptionHandler.NoteValidationException;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
 import com.org.NoteMakingApp.Repo.NoteRepo;
+import com.org.NoteMakingApp.Validation.NoteValidation;
 import com.org.NoteMakingApp.model.Category;
 import com.org.NoteMakingApp.model.Notes;
 import com.org.NoteMakingApp.service.NoteService;
@@ -27,10 +29,15 @@ public class NoteServiceImpl implements NoteService {
 	private NoteRepo noteRepo;
 	@Autowired
 	private CategoryRepo categoryRepo;
+	@Autowired
+	private NoteValidation noteValidation;
 
 	@Override
-	public boolean saveNotes(NotesDto notesDto) throws ResourceNotFoundException, AlreadyExists {
+	public boolean saveNotes(NotesDto notesDto)
+			throws ResourceNotFoundException, AlreadyExists {
 
+		// Note Validation
+		noteValidation.noteValidation(notesDto);
 		// Check Category Present or not
 		categoryExists(notesDto.getCategory().getId());
 //        noteExist(notesDto.getTitle());
