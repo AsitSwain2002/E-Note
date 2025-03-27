@@ -16,7 +16,6 @@ import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
 import com.org.NoteMakingApp.Validation.CategoryValidation;
 import com.org.NoteMakingApp.model.Category;
-import com.org.NoteMakingApp.model.CategoryResponse;
 import com.org.NoteMakingApp.service.CategoryService;
 
 @Service
@@ -59,8 +58,8 @@ public class CategoryServiceImpl implements CategoryService {
 				() -> new ResourceNotFoundException("Category With id '" + category.getId() + "' Not Found"));
 		if (!ObjectUtils.isEmpty(category)) {
 			category.setActive(existCategory.isActive());
-			category.setUpdate_by(1);
-			category.setUpdate_on(new Date());
+//			category.setUpdate_by(1);
+//			category.setUpdate_on(new Date());
 //			category.setDescription(existCategory.getDescription());
 //			category.setName(existCategory.getName());
 			category.setCreated_on(existCategory.getCreated_on());
@@ -75,10 +74,10 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<CategoryResponse> allActiveCategory() {
+	public List<CategoryDto> allActiveCategory() {
 
 		List<Category> findByActiveTrue = categoryRepo.findByActiveTrue();
-		return findByActiveTrue.stream().map(e -> mapper.map(e, CategoryResponse.class)).collect(Collectors.toList());
+		return findByActiveTrue.stream().map(e -> mapper.map(e, CategoryDto.class)).collect(Collectors.toList());
 	}
 
 	@Override

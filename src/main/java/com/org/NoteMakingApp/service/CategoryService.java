@@ -6,7 +6,6 @@ import com.org.NoteMakingApp.Dto.CategoryDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.model.Category;
-import com.org.NoteMakingApp.model.CategoryResponse;
 
 public interface CategoryService {
 
@@ -20,5 +19,5 @@ public interface CategoryService {
 
 	public boolean deleteCategoryById(int id) throws ResourceNotFoundException;
 
-	public List<CategoryResponse> allActiveCategory();
+	public List<CategoryDto> allActiveCategory();
 }
