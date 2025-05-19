@@ -23,13 +23,23 @@ public class NotesDto {
 	private int update_by;
 	private Date update_on;
 	private boolean isDeleted;
-	
+	private FiledetailsDto filedetails;
+
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public static class CategoryDto{
+	public static class FiledetailsDto {
+		private Integer id;
+		private String originalFileName;
+		private String displayFileName;
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	public static class CategoryDto {
 		private Integer id;
 		private String name;
-		
+
 	}
 }

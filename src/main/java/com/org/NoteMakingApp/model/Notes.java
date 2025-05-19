@@ -28,4 +28,6 @@ public class Notes extends BaseModel {
 	private boolean isDeleted;
 	@ManyToOne
 	private Category category;
+	@ManyToOne
+	private Filedetails filedetails;
 }

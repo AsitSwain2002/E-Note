@@ -1,5 +1,6 @@
 package com.org.NoteMakingApp.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
@@ -29,9 +32,10 @@ public class NoteController {
 	private NoteService noteService;
 
 	@PostMapping("/save-note")
-	public ResponseEntity<?> saveNote(@RequestBody NotesDto notesDto) throws ResourceNotFoundException, AlreadyExists {
+	public ResponseEntity<?> saveNote(@RequestParam String notesDto, @RequestParam(required = false) MultipartFile file)
+			throws ResourceNotFoundException, AlreadyExists, IOException {
 
-		boolean saveNotes = noteService.saveNotes(notesDto);
+		boolean saveNotes = noteService.saveNotes(notesDto, file);
 		if (saveNotes) {
 			return GenericResponceBuilder.withOutData("Saved Successfully", HttpStatus.CREATED);
 		} else {
