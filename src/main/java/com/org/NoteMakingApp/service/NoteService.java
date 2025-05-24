@@ -1,5 +1,6 @@
 package com.org.NoteMakingApp.service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
+import com.org.NoteMakingApp.model.Filedetails;
 
 public interface NoteService {
 
@@ -20,4 +22,9 @@ public interface NoteService {
 	public NotesDto findNoteById(Integer id) throws ResourceNotFoundException;
 
 	public void deleteNoteById(Integer id) throws ResourceNotFoundException;
+
+	public byte[] downloadFile(Filedetails fileDetails) throws IOException;
+
+	public Filedetails getFileDetails(int id) throws ResourceNotFoundException;
+
 }

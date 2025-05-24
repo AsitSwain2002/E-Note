@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -21,7 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
+import com.org.NoteMakingApp.model.Filedetails;
 import com.org.NoteMakingApp.service.NoteService;
+import com.org.NoteMakingApp.util.CommonUtil;
 import com.org.NoteMakingApp.util.GenericResponceBuilder;
 
 @RestController
@@ -67,5 +71,16 @@ public class NoteController {
 	public ResponseEntity<?> deleteNote(@PathVariable Integer id) throws ResourceNotFoundException {
 		noteService.deleteNoteById(id);
 		return GenericResponceBuilder.withOutData("Deleted Successfully", HttpStatus.NO_CONTENT);
+	}
+
+	@GetMapping("/downloadFile/{id}")
+	public ResponseEntity<?> downloadFile(@PathVariable int id) throws ResourceNotFoundException, IOException {
+		Filedetails fileDetails = noteService.getFileDetails(id);
+		byte[] downloadFile = noteService.downloadFile(fileDetails);
+		HttpHeaders headers = new HttpHeaders();
+		String contentType = CommonUtil.getContentType(fileDetails.getOriginalFileName());
+		headers.setContentType(MediaType.parseMediaType(contentType));
+		headers.setContentDispositionFormData("attachment", fileDetails.getOriginalFileName());
+		return ResponseEntity.ok().headers(headers).body(downloadFile);
 	}
 }
