@@ -1,7 +1,9 @@
 package com.org.NoteMakingApp.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,12 +13,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.hibernate.boot.archive.internal.FileInputStreamAccess;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,19 +92,20 @@ public class NoteServiceImpl implements NoteService {
 		if (!ObjectUtils.isEmpty(file) && !file.isEmpty()) {
 
 			String originalFilename = file.getOriginalFilename();
-			
-			//  Extension check logic
-			List<String> fileAllow = Arrays.asList("pdf", "jpg", "png");
-			if (!fileAllow.contains(FilenameUtils.getExtension(originalFilename))) {
-				throw new IllegalArgumentException("File name contain pdf , jpg ,png does not support");
-			}
-			//Random name generate
-			String randomString = UUID.randomUUID().toString();
 			String extension = FilenameUtils.getExtension(originalFilename);
+
+			// Extension check logic
+			List<String> fileAllow = Arrays.asList("pdf", "jpg", "png", "PDF", "JPG", "PNG");
+			if (!fileAllow.contains(extension)) {
+				throw new IllegalArgumentException("File name contain pdf , jpg ,png are support");
+			}
+			// Random name generate
+			String randomString = UUID.randomUUID().toString();
+
 			String uploadFileName = randomString + "." + extension;
 
 			File saveFile = new File(uploadPath);
-			if (!saveFile.exists()) { 
+			if (!saveFile.exists()) {
 				saveFile.mkdir();
 			}
 
@@ -132,6 +137,7 @@ public class NoteServiceImpl implements NoteService {
 		return fileName;
 	}
 
+	// Update Note
 	private void updateNote(Notes note) throws ResourceNotFoundException {
 		int id = note.getId();
 		Notes dbNote = noteRepo.findById(id)
@@ -174,6 +180,17 @@ public class NoteServiceImpl implements NoteService {
 				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
 		note.setDeleted(true);
 		noteRepo.save(note);
+	}
+
+	@Override
+	public byte[] downloadFile(Filedetails fileDetails) throws IOException {
+		InputStream input = new FileInputStream(fileDetails.getPath());
+		return StreamUtils.copyToByteArray(input);
+	}
+
+	@Override
+	public Filedetails getFileDetails(int id) throws ResourceNotFoundException {
+		return fileRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("File  Doesn't found"));
 	}
 
 }
