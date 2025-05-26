@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -13,21 +12,21 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hibernate.boot.archive.internal.FileInputStreamAccess;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.org.NoteMakingApp.Dto.CategoryDto;
+import com.org.NoteMakingApp.Dto.NoteResponse;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
-import com.org.NoteMakingApp.ExceptionHandler.NoteValidationException;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
 import com.org.NoteMakingApp.Repo.FileRepo;
@@ -191,6 +190,32 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public Filedetails getFileDetails(int id) throws ResourceNotFoundException {
 		return fileRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("File  Doesn't found"));
+	}
+
+	@Override
+	public NoteResponse getUserAllNotes(int id, int pageNum, int pageSize) {
+		Pageable page = PageRequest.of(pageNum, pageSize);
+		Page<Notes> allNotes = noteRepo.findByCreatedBy(id, page);
+		List<NotesDto> collect = allNotes.stream().map(note -> mapper.map(note, NotesDto.class))
+				.collect(Collectors.toList());
+		NoteResponse notes = NoteResponse.builder().notes(collect).totalElement(allNotes.getTotalElements())
+				.totalPages(allNotes.getTotalPages()).pageNumber(allNotes.getNumber()).pageSize(allNotes.getSize())
+				.isFirstPage(allNotes.isFirst()).isLastPage(allNotes.isLast()).build();
+		return notes;
+	}
+
+	@Override
+	public NoteResponse getUserAllNotesByCategory(int categoryId, int pageNum, int pageSize) {
+		Pageable page = PageRequest.of(pageNum, pageSize);
+		Page<Notes> category = noteRepo.findByCategoryId(categoryId, page);
+
+		List<NotesDto> allNotes = category.stream().map((note) -> mapper.map(note, NotesDto.class))
+				.collect(Collectors.toList());
+
+		NoteResponse notes = NoteResponse.builder().notes(allNotes).totalElement(category.getTotalElements())
+				.totalPages(category.getTotalPages()).pageNumber(category.getNumber()).pageSize(category.getSize())
+				.isFirstPage(category.isFirst()).isLastPage(category.isLast()).build();
+		return notes;
 	}
 
 }

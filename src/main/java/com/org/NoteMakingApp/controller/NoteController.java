@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,12 +15,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.NoteMakingApp.Dto.NoteResponse;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
@@ -54,6 +55,27 @@ public class NoteController {
 			return GenericResponceBuilder.withOutData("No data Found", HttpStatus.OK);
 		} else {
 			return GenericResponceBuilder.withData("Fetched", allNotes, HttpStatus.OK);
+		}
+	}
+
+	@GetMapping("user/all-notes/{userId}")
+	public ResponseEntity<?> getUserAllNote(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+			@RequestParam(name = "pageSize", defaultValue = "5") int pageSize, @PathVariable int userId) {
+		NoteResponse userAllNotes = noteService.getUserAllNotes(userId, pageNum, pageSize);
+		if (userAllNotes.getNotes().isEmpty()) {
+			return GenericResponceBuilder.withOutData("No data Found", HttpStatus.OK);
+		} else {
+			return GenericResponceBuilder.withData("Fetched", userAllNotes, HttpStatus.OK);
+		}
+	}
+	@GetMapping("user/category/all-notes/{categoryId}")
+	public ResponseEntity<?> getUserAllNoteByCategory(@RequestParam(name = "pageNum", defaultValue = "0") int pageNum,
+			@RequestParam(name = "pageSize", defaultValue = "5") int pageSize, @PathVariable int categoryId) {
+		NoteResponse userAllNotes = noteService.getUserAllNotesByCategory(categoryId, pageNum, pageSize);
+		if (userAllNotes.getNotes().isEmpty()) {
+			return GenericResponceBuilder.withOutData("No data Found", HttpStatus.OK);
+		} else {
+			return GenericResponceBuilder.withData("Fetched", userAllNotes, HttpStatus.OK);
 		}
 	}
 
