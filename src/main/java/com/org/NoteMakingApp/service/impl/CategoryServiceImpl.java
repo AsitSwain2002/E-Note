@@ -35,8 +35,8 @@ public class CategoryServiceImpl implements CategoryService {
 		Category category = mapper.map(categoryDto, Category.class);
 		if (ObjectUtils.isEmpty(category.getId()) || category.getId() == 0) {
 			category.setDeleted(false);
-			category.setCreated_on(new Date());
-			category.setCreated_by(1);
+			category.setCreatedOn(new Date());
+			category.setCreatedBy(1);
 			Category findByName = categoryRepo.findByName(category.getName());
 			if (!ObjectUtils.isEmpty(findByName)) {
 				throw new AlreadyExists("Category Already Present");
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
 //			category.setUpdate_on(new Date());
 //			category.setDescription(existCategory.getDescription());
 //			category.setName(existCategory.getName());
-			category.setCreated_on(existCategory.getCreated_on());
+			category.setCreatedOn(existCategory.getCreatedOn());
 			category.setDeleted(existCategory.isDeleted());
 		}
 	}

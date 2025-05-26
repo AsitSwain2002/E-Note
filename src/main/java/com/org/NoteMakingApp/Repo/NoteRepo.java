@@ -2,6 +2,8 @@ package com.org.NoteMakingApp.Repo;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,9 @@ public interface NoteRepo extends JpaRepository<Notes, Integer> {
 	boolean existsByTitle(String title);
 
 	List<Notes> findByIsDeletedFalse();
+
+	Page<Notes> findByCreatedBy(int id, Pageable page);
+
+	Page<Notes> findByCategoryId(int categoryId, Pageable page);
+
 }
