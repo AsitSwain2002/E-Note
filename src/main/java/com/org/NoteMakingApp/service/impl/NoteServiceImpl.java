@@ -69,16 +69,20 @@ public class NoteServiceImpl implements NoteService {
 //        noteExist(notesDto.getTitle());
 		Notes note = mapper.map(notesDto, Notes.class);
 
+		// update Note
+		if (notesDto.getId() != null) {
+			updateNote(note, file);
+		}
 		// File Upload Logic
 		Filedetails filedetails = saveFile(file);
 		if (!ObjectUtils.isEmpty(filedetails)) {
 			note.setFiledetails(filedetails);
 		} else {
-			note.setFiledetails(null);
+			if (note.getId() == null) {
+				note.setFiledetails(null);
+			}
 		}
-		if (notesDto.getId() != null) {
-			updateNote(note);
-		}
+
 		Notes save = noteRepo.save(note);
 		if (ObjectUtils.isEmpty(save)) {
 			return false;
@@ -137,11 +141,12 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	// Update Note
-	private void updateNote(Notes note) throws ResourceNotFoundException {
-		int id = note.getId();
-		Notes dbNote = noteRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
-		note.setCategory(dbNote.getCategory());
+	private void updateNote(Notes note, MultipartFile file) throws ResourceNotFoundException {
+		Notes dbNote = noteRepo.findById(note.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + note.getId() + "' not found"));
+		if (ObjectUtils.isEmpty(file)) {
+			note.setFiledetails(dbNote.getFiledetails());
+		}
 	}
 
 //	private void noteExist(String title) throws AlreadyExists {
