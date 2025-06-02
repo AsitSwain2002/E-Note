@@ -31,4 +31,12 @@ public interface NoteService {
 
 	public NoteResponse getUserAllNotesByCategory(int categoryId, int pageNum, int pageSize);
 
+	public void restoreNoteById(Integer id) throws ResourceNotFoundException;
+
+	public List<NotesDto> recycleNote(int userId);
+
+	public void hardDeleteNote(int userId) throws ResourceNotFoundException;
+
+	public void deleteAllNoteFromRecycle(int userId);
+
 }

@@ -1,5 +1,6 @@
 package com.org.NoteMakingApp.Dto;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.org.NoteMakingApp.model.Category;
@@ -24,6 +25,7 @@ public class NotesDto {
 	private Date update_on;
 	private boolean isDeleted;
 	private FiledetailsDto filedetails;
+	private LocalDateTime deletedOn;
 
 	@Getter
 	@Setter

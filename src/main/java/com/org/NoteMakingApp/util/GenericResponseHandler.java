@@ -26,4 +26,11 @@ public class GenericResponseHandler {
 		response.put("status",status );
 		return new ResponseEntity<>(response,HttpStatus.valueOf(status));
 	}
+	public ResponseEntity<?> createWithoutData() {
+
+		Map<String, Object> response = new LinkedHashMap<String, Object>();
+		response.put("message", message);
+		response.put("status",status );
+		return new ResponseEntity<>(response,HttpStatus.valueOf(status));
+	}
 }

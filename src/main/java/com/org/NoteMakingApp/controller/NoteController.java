@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,6 +69,8 @@ public class NoteController {
 			return GenericResponceBuilder.withData("Fetched", userAllNotes, HttpStatus.OK);
 		}
 	}
+
+	// Fetch All Note By Category
 	@GetMapping("user/category/all-notes/{categoryId}")
 	public ResponseEntity<?> getUserAllNoteByCategory(@RequestParam(name = "pageNum", defaultValue = "0") int pageNum,
 			@RequestParam(name = "pageSize", defaultValue = "5") int pageSize, @PathVariable int categoryId) {
@@ -79,6 +82,7 @@ public class NoteController {
 		}
 	}
 
+	// Fetch Note By Id
 	@GetMapping("/{id}")
 	public ResponseEntity<?> fetchNoteById(@PathVariable Integer id) throws ResourceNotFoundException {
 		NotesDto findNoteById = noteService.findNoteById(id);
@@ -89,12 +93,46 @@ public class NoteController {
 		}
 	}
 
-	@DeleteMapping("/deleteNote/{id}")
+	// Delete Note
+	@GetMapping("/deleteNote/{id}")
 	public ResponseEntity<?> deleteNote(@PathVariable Integer id) throws ResourceNotFoundException {
 		noteService.deleteNoteById(id);
 		return GenericResponceBuilder.withOutData("Deleted Successfully", HttpStatus.NO_CONTENT);
 	}
 
+	// Restore Note
+	@GetMapping("/restoreNote/{id}")
+	public ResponseEntity<?> restoreNote(@PathVariable Integer id) throws ResourceNotFoundException {
+		noteService.restoreNoteById(id);
+		return GenericResponceBuilder.withOutData("Note Restore Successfully", HttpStatus.OK);
+	}
+
+	// Recycle Bin
+	@GetMapping("/recycle-note")
+	public ResponseEntity<?> restoreNote() throws ResourceNotFoundException {
+		int userId = 1;
+		List<NotesDto> recycleNote = noteService.recycleNote(userId);
+		if(ObjectUtils.isEmpty(recycleNote)) {
+			return GenericResponceBuilder.withOutData("No Note found", HttpStatus.OK);
+		}
+		return GenericResponceBuilder.withData("Note Restore Successfully", recycleNote, HttpStatus.OK);
+	}
+
+	//Fully  Delete
+	@DeleteMapping("/force-delete-note/{noteId}")
+	public ResponseEntity<?> forceDeleteNote(@PathVariable int noteId) throws ResourceNotFoundException {
+		noteService.hardDeleteNote(noteId);
+		return GenericResponceBuilder.withOutData("Note Deleted Successfully",  HttpStatus.OK);
+	}
+	
+	//Delete all file In recycle Bin
+	@DeleteMapping("/delete-allnote-recyclebin")
+	public ResponseEntity<?> deleteAllNoteFromRecycle() throws ResourceNotFoundException {
+		int userId = 1;
+		noteService.deleteAllNoteFromRecycle(userId);
+		return GenericResponceBuilder.withOutData("All Note Deleted Successfully",  HttpStatus.OK);
+	}
+	// Download File
 	@GetMapping("/downloadFile/{id}")
 	public ResponseEntity<?> downloadFile(@PathVariable int id) throws ResourceNotFoundException, IOException {
 		Filedetails fileDetails = noteService.getFileDetails(id);

@@ -13,6 +13,6 @@ public class ExceptionData {
 
 	private int statusCode;
 	private String message;
-	private Map<String , Object> messages;
+	private Map<String , Object> failedMessages;
 	private String time;
 }

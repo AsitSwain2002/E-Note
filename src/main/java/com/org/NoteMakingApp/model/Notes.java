@@ -1,5 +1,8 @@
 package com.org.NoteMakingApp.model;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Entity;
@@ -30,4 +33,6 @@ public class Notes extends BaseModel {
 	private Category category;
 	@ManyToOne
 	private Filedetails filedetails;
+
+	private LocalDateTime deletedOn;
 }
