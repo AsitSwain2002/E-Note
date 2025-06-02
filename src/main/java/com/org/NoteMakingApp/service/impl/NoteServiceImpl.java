@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -130,6 +133,7 @@ public class NoteServiceImpl implements NoteService {
 		return null;
 	}
 
+	// Display file Name
 	private String getdisplayFilename(String originalFilename) {
 		String extension = FilenameUtils.getExtension(originalFilename);
 		String fileName = FilenameUtils.removeExtension(originalFilename);
@@ -156,6 +160,7 @@ public class NoteServiceImpl implements NoteService {
 //		}
 //	}
 
+	// Category Exist Check
 	private void categoryExists(Integer id) throws ResourceNotFoundException {
 
 		Category orElseThrow = categoryRepo.findById(id)
@@ -178,12 +183,51 @@ public class NoteServiceImpl implements NoteService {
 		return mapper.map(note, NotesDto.class);
 	}
 
+	// Delete Note
 	@Override
 	public void deleteNoteById(Integer id) throws ResourceNotFoundException {
 		Notes note = noteRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
 		note.setDeleted(true);
+		note.setDeletedOn(LocalDateTime.now());
 		noteRepo.save(note);
+	}
+
+	// Restore Delete Note
+	@Override
+	public void restoreNoteById(Integer id) throws ResourceNotFoundException {
+		Notes note = noteRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
+		note.setDeleted(false);
+		note.setDeletedOn(null);
+		noteRepo.save(note);
+	}
+
+	// Recycle Notes
+	@Override
+	public List<NotesDto> recycleNote(int userId) {
+
+		List<Notes> dbfetchedNote = noteRepo.findByCreatedByAndIsDeletedTrue(userId);
+		return dbfetchedNote.stream().map(note -> mapper.map(note, NotesDto.class)).collect(Collectors.toList());
+	}
+
+	@Override
+	public void deleteAllNoteFromRecycle(int userId) {
+
+		List<Notes> findByCreatedByAndIsDeletedTrue = noteRepo.findByCreatedByAndIsDeletedTrue(userId);
+		noteRepo.deleteAll(findByCreatedByAndIsDeletedTrue);
+	}
+
+	@Override
+	public void hardDeleteNote(int noteId) throws ResourceNotFoundException {
+		Notes note = noteRepo.findById(noteId)
+				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + noteId + "' not found"));
+
+		if (note.isDeleted()) {
+			noteRepo.delete(note);
+		} else {
+			throw new IllegalArgumentException("Sorry You Can't Delete It Directly");
+		}
 	}
 
 	@Override

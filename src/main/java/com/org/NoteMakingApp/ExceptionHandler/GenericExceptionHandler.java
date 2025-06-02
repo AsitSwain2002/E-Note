@@ -44,7 +44,7 @@ public class GenericExceptionHandler {
 	public static ResponseEntity<?> CategoryValidationEcxception(CategoryValidationEcxception e) {
 		ExceptionData data = new ExceptionData();
 		data.setMessage(e.getMessage());
-		data.setMessages(e.getError());
+		data.setFailedMessages(e.getError());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
 		data.setTime(new Date().toLocaleString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
@@ -54,7 +54,7 @@ public class GenericExceptionHandler {
 	public static ResponseEntity<?> noteValidationException(NoteValidationException e) {
 		ExceptionData data = new ExceptionData();
 		data.setMessage(e.getMessage());
-		data.setMessages(e.getErrorRes());
+		data.setFailedMessages(e.getErrorRes());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
 		data.setTime(new Date().toLocaleString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);

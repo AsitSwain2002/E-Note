@@ -22,7 +22,7 @@ public class GenericResponceBuilder {
 		GenericResponseHandler genericResponseHandler = new GenericResponseHandler();
 		genericResponseHandler.setMessage(message);
 		genericResponseHandler.setStatus(status.value());
-		return genericResponseHandler.create();
+		return genericResponseHandler.createWithoutData();
 	}
 
 	public static ResponseEntity<?> errorMessage(ExceptionData message, HttpStatusCode status) {

@@ -1,5 +1,6 @@
 package com.org.NoteMakingApp.Repo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -20,4 +21,9 @@ public interface NoteRepo extends JpaRepository<Notes, Integer> {
 
 	Page<Notes> findByCategoryId(int categoryId, Pageable page);
 
+	List<Notes> findByCreatedByAndIsDeletedTrue(int userId);
+
+	List<Notes> findAllByIsDeletedAndDeletedOnBefore(boolean b, LocalDateTime autoDeleteDays);
+
 }
+ 
