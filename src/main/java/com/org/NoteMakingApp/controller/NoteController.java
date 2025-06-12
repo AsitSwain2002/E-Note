@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.org.NoteMakingApp.Dto.FevoriteNoteDto;
 import com.org.NoteMakingApp.Dto.NoteResponse;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
@@ -112,26 +113,51 @@ public class NoteController {
 	public ResponseEntity<?> restoreNote() throws ResourceNotFoundException {
 		int userId = 1;
 		List<NotesDto> recycleNote = noteService.recycleNote(userId);
-		if(ObjectUtils.isEmpty(recycleNote)) {
+		if (ObjectUtils.isEmpty(recycleNote)) {
 			return GenericResponceBuilder.withOutData("No Note found", HttpStatus.OK);
 		}
 		return GenericResponceBuilder.withData("Note Restore Successfully", recycleNote, HttpStatus.OK);
 	}
 
-	//Fully  Delete
+	// Favorite Note Module
+	@PostMapping("/fevorite/{noteId}")
+	public ResponseEntity<?> fevoriteNote(@PathVariable int noteId) throws ResourceNotFoundException {
+		noteService.addToFevorite(noteId);
+		return GenericResponceBuilder.withOutData("Note Added  Fevorite  Successfully", HttpStatus.OK);
+	}
+
+	// Un-Favorite Note Module
+	@DeleteMapping("/un-fevorite/{favNoteId}")
+	public ResponseEntity<?> unFevoriteNote(@PathVariable int favNoteId) throws ResourceNotFoundException {
+		noteService.removeFevorite(favNoteId);
+		return GenericResponceBuilder.withOutData("Note Removed  From Fevorite  Successfully", HttpStatus.OK);
+	}
+
+	// All Favorite Note
+	@GetMapping("/fevoriteNotes")
+	public ResponseEntity<?> allFevoriteNote() throws ResourceNotFoundException {
+		List<FevoriteNoteDto> allFavNote = noteService.allFavNote();
+		if(CollectionUtils.isEmpty(allFavNote)) {
+			return GenericResponceBuilder.withOutData("No Fevorite Note",HttpStatus.OK);
+		}
+		return GenericResponceBuilder.withData("Note Fetched  Successfully", allFavNote, HttpStatus.OK);
+	}
+
+	// Fully Delete
 	@DeleteMapping("/force-delete-note/{noteId}")
 	public ResponseEntity<?> forceDeleteNote(@PathVariable int noteId) throws ResourceNotFoundException {
 		noteService.hardDeleteNote(noteId);
-		return GenericResponceBuilder.withOutData("Note Deleted Successfully",  HttpStatus.OK);
+		return GenericResponceBuilder.withOutData("Note Deleted Successfully", HttpStatus.OK);
 	}
-	
-	//Delete all file In recycle Bin
+
+	// Delete all file In recycle Bin
 	@DeleteMapping("/delete-allnote-recyclebin")
 	public ResponseEntity<?> deleteAllNoteFromRecycle() throws ResourceNotFoundException {
 		int userId = 1;
 		noteService.deleteAllNoteFromRecycle(userId);
-		return GenericResponceBuilder.withOutData("All Note Deleted Successfully",  HttpStatus.OK);
+		return GenericResponceBuilder.withOutData("All Note Deleted Successfully", HttpStatus.OK);
 	}
+
 	// Download File
 	@GetMapping("/downloadFile/{id}")
 	public ResponseEntity<?> downloadFile(@PathVariable int id) throws ResourceNotFoundException, IOException {

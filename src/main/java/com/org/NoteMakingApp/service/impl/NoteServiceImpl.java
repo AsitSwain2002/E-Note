@@ -27,15 +27,18 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.org.NoteMakingApp.Dto.FevoriteNoteDto;
 import com.org.NoteMakingApp.Dto.NoteResponse;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.ExceptionHandler.ResourceNotFoundException;
 import com.org.NoteMakingApp.Repo.CategoryRepo;
+import com.org.NoteMakingApp.Repo.FevoriteNoteRepo;
 import com.org.NoteMakingApp.Repo.FileRepo;
 import com.org.NoteMakingApp.Repo.NoteRepo;
 import com.org.NoteMakingApp.Validation.NoteValidation;
 import com.org.NoteMakingApp.model.Category;
+import com.org.NoteMakingApp.model.FevoriteNote;
 import com.org.NoteMakingApp.model.Filedetails;
 import com.org.NoteMakingApp.model.Notes;
 import com.org.NoteMakingApp.service.NoteService;
@@ -49,6 +52,8 @@ public class NoteServiceImpl implements NoteService {
 	private NoteRepo noteRepo;
 	@Autowired
 	private CategoryRepo categoryRepo;
+	@Autowired
+	private FevoriteNoteRepo fevoriteNoteRepo;
 	@Autowired
 	private NoteValidation noteValidation;
 	@Autowired
@@ -265,6 +270,30 @@ public class NoteServiceImpl implements NoteService {
 				.totalPages(category.getTotalPages()).pageNumber(category.getNumber()).pageSize(category.getSize())
 				.isFirstPage(category.isFirst()).isLastPage(category.isLast()).build();
 		return notes;
+	}
+
+	@Override
+	public void addToFevorite(int noteId) throws ResourceNotFoundException {
+		int userId = 1;
+		Notes notes = noteRepo.findById(noteId)
+				.orElseThrow(() -> new ResourceNotFoundException("Note With " + noteId + " Not Found"));
+
+		FevoriteNote fevoriteNote = FevoriteNote.builder().userId(userId).note(notes).build();
+		fevoriteNoteRepo.save(fevoriteNote);
+	}
+
+	@Override
+	public void removeFevorite(int favNoteId) throws ResourceNotFoundException {
+		FevoriteNote favNotes = fevoriteNoteRepo.findById(favNoteId)
+				.orElseThrow(() -> new ResourceNotFoundException("Fav Note With " + favNoteId + " Not Found"));
+		fevoriteNoteRepo.delete(favNotes);
+	}
+
+	@Override
+	public List<FevoriteNoteDto> allFavNote() {
+		int userId = 1;
+		List<FevoriteNote> findAllByUserId = fevoriteNoteRepo.findAllByUserId(userId);
+		return findAllByUserId.stream().map(e -> mapper.map(e, FevoriteNoteDto.class)).collect(Collectors.toList());
 	}
 
 }
