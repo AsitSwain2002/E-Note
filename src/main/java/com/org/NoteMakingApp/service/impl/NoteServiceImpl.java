@@ -152,7 +152,7 @@ public class NoteServiceImpl implements NoteService {
 	// Update Note
 	private void updateNote(Notes note, MultipartFile file) throws ResourceNotFoundException {
 		Notes dbNote = noteRepo.findById(note.getId())
-				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + note.getId() + "' not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID '" + note.getId() + "' not found"));
 		if (ObjectUtils.isEmpty(file)) {
 			note.setFiledetails(dbNote.getFiledetails());
 		}
@@ -181,7 +181,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public NotesDto findNoteById(Integer id) throws ResourceNotFoundException {
 		Notes note = noteRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID '" + id + "' not found"));
 		if (note.isDeleted()) {
 			throw new ResourceNotFoundException("Note with id '" + id + "' not found");
 		}
@@ -192,7 +192,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void deleteNoteById(Integer id) throws ResourceNotFoundException {
 		Notes note = noteRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID '" + id + "' not found"));
 		note.setDeleted(true);
 		note.setDeletedOn(LocalDateTime.now());
 		noteRepo.save(note);
@@ -202,7 +202,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void restoreNoteById(Integer id) throws ResourceNotFoundException {
 		Notes note = noteRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + id + "' not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID '" + id + "' not found"));
 		note.setDeleted(false);
 		note.setDeletedOn(null);
 		noteRepo.save(note);
@@ -226,7 +226,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void hardDeleteNote(int noteId) throws ResourceNotFoundException {
 		Notes note = noteRepo.findById(noteId)
-				.orElseThrow(() -> new ResourceNotFoundException("Note with id '" + noteId + "' not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID '" + noteId + "' not found"));
 
 		if (note.isDeleted()) {
 			noteRepo.delete(note);
@@ -276,7 +276,7 @@ public class NoteServiceImpl implements NoteService {
 	public void addToFevorite(int noteId) throws ResourceNotFoundException {
 		int userId = 1;
 		Notes notes = noteRepo.findById(noteId)
-				.orElseThrow(() -> new ResourceNotFoundException("Note With " + noteId + " Not Found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID " + noteId + " Not Found"));
 
 		FevoriteNote fevoriteNote = FevoriteNote.builder().userId(userId).note(notes).build();
 		fevoriteNoteRepo.save(fevoriteNote);
@@ -285,7 +285,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void removeFevorite(int favNoteId) throws ResourceNotFoundException {
 		FevoriteNote favNotes = fevoriteNoteRepo.findById(favNoteId)
-				.orElseThrow(() -> new ResourceNotFoundException("Fav Note With " + favNoteId + " Not Found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Fav Note With ID  " + favNoteId + " Not Found"));
 		fevoriteNoteRepo.delete(favNotes);
 	}
 
@@ -294,6 +294,25 @@ public class NoteServiceImpl implements NoteService {
 		int userId = 1;
 		List<FevoriteNote> findAllByUserId = fevoriteNoteRepo.findAllByUserId(userId);
 		return findAllByUserId.stream().map(e -> mapper.map(e, FevoriteNoteDto.class)).collect(Collectors.toList());
+	}
+
+	//Copy Note logic
+	@Override
+	public boolean copyNote(int id) throws ResourceNotFoundException {
+		int userId = 1;
+		Notes notes = noteRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Note With ID " + id + " Not Found"));
+		Notes copyNote = Notes.builder().title(notes.getTitle()).category(notes.getCategory()).filedetails(null)
+				.isDeleted(false).description(notes.getDescription()).build();
+		
+		//check the copy user and the main user is same or not
+		if (userId == notes.getCreatedBy()) {
+			Notes save = noteRepo.save(copyNote);
+			if (!ObjectUtils.isEmpty(save)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
