@@ -46,4 +46,6 @@ public interface NoteService {
 
 	public List<FevoriteNoteDto> allFavNote();
 
+	public boolean copyNote(int id) throws ResourceNotFoundException;
+
 }

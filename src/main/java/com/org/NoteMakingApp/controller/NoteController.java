@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,6 +67,18 @@ public class NoteController {
 		} else {
 			return GenericResponceBuilder.withData("Fetched", userAllNotes, HttpStatus.OK);
 		}
+	}
+
+	// Download File
+	@GetMapping("/downloadFile/{id}")
+	public ResponseEntity<?> downloadFile(@PathVariable int id) throws ResourceNotFoundException, IOException {
+		Filedetails fileDetails = noteService.getFileDetails(id);
+		byte[] downloadFile = noteService.downloadFile(fileDetails);
+		HttpHeaders headers = new HttpHeaders();
+		String contentType = CommonUtil.getContentType(fileDetails.getOriginalFileName());
+		headers.setContentType(MediaType.parseMediaType(contentType));
+		headers.setContentDispositionFormData("attachment", fileDetails.getOriginalFileName());
+		return ResponseEntity.ok().headers(headers).body(downloadFile);
 	}
 
 	// Fetch All Note By Category
@@ -137,8 +147,8 @@ public class NoteController {
 	@GetMapping("/fevoriteNotes")
 	public ResponseEntity<?> allFevoriteNote() throws ResourceNotFoundException {
 		List<FevoriteNoteDto> allFavNote = noteService.allFavNote();
-		if(CollectionUtils.isEmpty(allFavNote)) {
-			return GenericResponceBuilder.withOutData("No Fevorite Note",HttpStatus.OK);
+		if (CollectionUtils.isEmpty(allFavNote)) {
+			return GenericResponceBuilder.withOutData("No Fevorite Note", HttpStatus.OK);
 		}
 		return GenericResponceBuilder.withData("Note Fetched  Successfully", allFavNote, HttpStatus.OK);
 	}
@@ -158,15 +168,14 @@ public class NoteController {
 		return GenericResponceBuilder.withOutData("All Note Deleted Successfully", HttpStatus.OK);
 	}
 
-	// Download File
-	@GetMapping("/downloadFile/{id}")
-	public ResponseEntity<?> downloadFile(@PathVariable int id) throws ResourceNotFoundException, IOException {
-		Filedetails fileDetails = noteService.getFileDetails(id);
-		byte[] downloadFile = noteService.downloadFile(fileDetails);
-		HttpHeaders headers = new HttpHeaders();
-		String contentType = CommonUtil.getContentType(fileDetails.getOriginalFileName());
-		headers.setContentType(MediaType.parseMediaType(contentType));
-		headers.setContentDispositionFormData("attachment", fileDetails.getOriginalFileName());
-		return ResponseEntity.ok().headers(headers).body(downloadFile);
+	// Copy Note
+	@GetMapping("/copy-note/{id}")
+	public ResponseEntity<?> copyNote(@PathVariable int id) throws ResourceNotFoundException {
+		boolean copyNote = noteService.copyNote(id);
+		if (copyNote) {
+			return GenericResponceBuilder.withOutData("Note Copied", HttpStatus.OK);
+		}
+		return GenericResponceBuilder.withOutData("Something wnt wrong ! Please try again",
+				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
