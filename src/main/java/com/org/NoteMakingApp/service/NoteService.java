@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.org.NoteMakingApp.Dto.FevoriteNoteDto;
 import com.org.NoteMakingApp.Dto.NoteResponse;
 import com.org.NoteMakingApp.Dto.NotesDto;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
@@ -38,5 +39,11 @@ public interface NoteService {
 	public void hardDeleteNote(int userId) throws ResourceNotFoundException;
 
 	public void deleteAllNoteFromRecycle(int userId);
+
+	public void addToFevorite(int noteId) throws ResourceNotFoundException;
+
+	public void removeFevorite(int favNoteId) throws ResourceNotFoundException;
+
+	public List<FevoriteNoteDto> allFavNote();
 
 }
