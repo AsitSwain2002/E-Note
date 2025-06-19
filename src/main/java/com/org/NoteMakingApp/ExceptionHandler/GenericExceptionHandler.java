@@ -59,6 +59,7 @@ public class GenericExceptionHandler {
 		data.setTime(new Date().toLocaleString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
+
 	@ExceptionHandler(FileNotFoundException.class)
 	public static ResponseEntity<?> noteValidationException(FileNotFoundException e) {
 		ExceptionData data = new ExceptionData();
@@ -66,6 +67,16 @@ public class GenericExceptionHandler {
 		data.setStatusCode(HttpStatus.NOT_FOUND.value());
 		data.setTime(new Date().toLocaleString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(TodoValidationException.class)
+	public static ResponseEntity<?> todoValidationException(TodoValidationException e) {
+		ExceptionData data = new ExceptionData();
+		data.setMessage(e.getMessage());
+		data.setFailedMessages(e.getErrorRes());
+		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
+		data.setTime(new Date().toLocaleString());
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
 }

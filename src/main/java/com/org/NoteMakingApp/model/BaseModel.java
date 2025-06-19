@@ -28,4 +28,4 @@ public class BaseModel {
 	@LastModifiedDate
 	@Column(insertable = false)
 	private Date updateOn;
-}
+}  
