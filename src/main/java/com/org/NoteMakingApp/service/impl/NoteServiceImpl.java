@@ -8,13 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -296,7 +294,7 @@ public class NoteServiceImpl implements NoteService {
 		return findAllByUserId.stream().map(e -> mapper.map(e, FevoriteNoteDto.class)).collect(Collectors.toList());
 	}
 
-	//Copy Note logic
+	// Copy Note logic
 	@Override
 	public boolean copyNote(int id) throws ResourceNotFoundException {
 		int userId = 1;
@@ -304,8 +302,8 @@ public class NoteServiceImpl implements NoteService {
 				.orElseThrow(() -> new ResourceNotFoundException("Note With ID " + id + " Not Found"));
 		Notes copyNote = Notes.builder().title(notes.getTitle()).category(notes.getCategory()).filedetails(null)
 				.isDeleted(false).description(notes.getDescription()).build();
-		
-		//check the copy user and the main user is same or not
+
+		// check the copy user and the main user is same or not
 		if (userId == notes.getCreatedBy()) {
 			Notes save = noteRepo.save(copyNote);
 			if (!ObjectUtils.isEmpty(save)) {
