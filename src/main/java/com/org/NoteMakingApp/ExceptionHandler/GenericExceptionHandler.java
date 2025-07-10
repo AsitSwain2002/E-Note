@@ -1,7 +1,7 @@
 package com.org.NoteMakingApp.ExceptionHandler;
 
 import java.io.FileNotFoundException;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class GenericExceptionHandler {
 		ExceptionData data = new ExceptionData();
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.NOT_FOUND.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.NOT_FOUND);
 	}
 
@@ -27,7 +27,7 @@ public class GenericExceptionHandler {
 		ExceptionData data = new ExceptionData();
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.CONFLICT.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.CONFLICT);
 	}
 
@@ -36,7 +36,7 @@ public class GenericExceptionHandler {
 		ExceptionData data = new ExceptionData();
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
@@ -46,7 +46,7 @@ public class GenericExceptionHandler {
 		data.setMessage(e.getMessage());
 		data.setFailedMessages(e.getError());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
@@ -56,7 +56,7 @@ public class GenericExceptionHandler {
 		data.setMessage(e.getMessage());
 		data.setFailedMessages(e.getErrorRes());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
@@ -65,7 +65,7 @@ public class GenericExceptionHandler {
 		ExceptionData data = new ExceptionData();
 		data.setMessage(e.getMessage());
 		data.setStatusCode(HttpStatus.NOT_FOUND.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.NOT_FOUND);
 	}
 
@@ -75,7 +75,15 @@ public class GenericExceptionHandler {
 		data.setMessage(e.getMessage());
 		data.setFailedMessages(e.getErrorRes());
 		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
-		data.setTime(new Date().toLocaleString());
+		data.setTime(LocalDateTime.now().toString());
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(AlreadyVerifiedException.class)
+	public static ResponseEntity<?> alreadyVerifiedException(AlreadyVerifiedException e) {
+		ExceptionData data = new ExceptionData();
+		data.setMessage(e.getMessage());
+		data.setStatusCode(HttpStatus.BAD_REQUEST.value());
+		data.setTime(LocalDateTime.now().toString());
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.BAD_REQUEST);
 	}
 
