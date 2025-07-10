@@ -2,6 +2,8 @@ package com.org.NoteMakingApp.util;
 
 import org.apache.commons.io.FilenameUtils;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public class CommonUtil {
 
 	public static String getContentType(String originalFileName) {
@@ -21,6 +23,14 @@ public class CommonUtil {
 		default:
 			return "application/octet-stream";
 		}
+	}
+
+	public static String getUrl(HttpServletRequest request) {
+		String url = request.getRequestURL().toString();
+		String requestURI = request.getRequestURI();
+
+		String baseUrl = url.replace(requestURI, "");
+		return baseUrl;
 	}
 
 }
