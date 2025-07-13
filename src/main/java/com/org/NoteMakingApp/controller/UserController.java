@@ -36,14 +36,11 @@ public class UserController {
 			return GenericResponceBuilder.withOutData("Something Went Wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-	}
+	} 
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) throws Exception {
 		LoginResponse login = userService.login(loginRequest);
-		System.out.println();
-		System.out.println(login);
-		System.out.println();
 		if(ObjectUtils.isEmpty(login)) {
 			GenericResponceBuilder.errorMessage(ExceptionData.builder().message("Invalid Credintial").build(), HttpStatus.NOT_FOUND);
 		}

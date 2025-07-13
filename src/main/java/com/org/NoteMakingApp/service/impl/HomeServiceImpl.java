@@ -24,7 +24,6 @@ public class HomeServiceImpl implements HomeService {
 			throw new AlreadyVerifiedException("Already Verified");
 		}
 		if (user.getUserVerification().getVerificationCode().equals(vCode)) {
-			System.out.println("Runn Here");
 			UserVerification userVerification = user.getUserVerification();
 			userVerification.setIsActive(true);
 			userVerification.setVerificationCode(null);

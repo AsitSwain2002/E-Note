@@ -24,6 +24,7 @@ import com.org.NoteMakingApp.config.security.UserDetlImpl;
 import com.org.NoteMakingApp.model.Role;
 import com.org.NoteMakingApp.model.UserVerification;
 import com.org.NoteMakingApp.model.Users;
+import com.org.NoteMakingApp.service.JwtService;
 import com.org.NoteMakingApp.service.UserService;
 import com.org.NoteMakingApp.util.MailService;
 
@@ -42,7 +43,8 @@ public class UserServiceImpl implements UserService {
 	private MailService mailServices;
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
+	@Autowired
+	private JwtService jwtService;
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 
@@ -96,8 +98,8 @@ public class UserServiceImpl implements UserService {
 		Authentication authenticate = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 		if (authenticate.isAuthenticated()) {
-			String token = "dhfdcjdckdsjivhovh";
 			UserDetlImpl cUser = (UserDetlImpl) authenticate.getPrincipal();
+			String token = jwtService.getToken(cUser.getUser());
 			LoginResponse loginResponse = LoginResponse.builder().user(mapper.map(cUser.getUser(), UsersDto.class))
 					.token(token).build();
 			return loginResponse;
