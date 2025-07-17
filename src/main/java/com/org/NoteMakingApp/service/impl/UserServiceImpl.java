@@ -102,6 +102,7 @@ public class UserServiceImpl implements UserService {
 			String token = jwtService.getToken(cUser.getUser());
 			LoginResponse loginResponse = LoginResponse.builder().user(mapper.map(cUser.getUser(), UsersDto.class))
 					.token(token).build();
+
 			return loginResponse;
 		}
 		return null;
