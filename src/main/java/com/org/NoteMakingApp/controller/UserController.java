@@ -3,6 +3,8 @@ package com.org.NoteMakingApp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,7 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/save-user")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> saveUser(@RequestBody UsersDto usersDto, HttpServletRequest req) throws Exception {
 		String reqUrl = CommonUtil.getUrl(req);
 		boolean registerUser = userService.registerUser(usersDto, reqUrl);
@@ -36,15 +39,16 @@ public class UserController {
 			return GenericResponceBuilder.withOutData("Something Went Wrong!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-	} 
+	}
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) throws Exception {
 		LoginResponse login = userService.login(loginRequest);
-		if(ObjectUtils.isEmpty(login)) {
-			GenericResponceBuilder.errorMessage(ExceptionData.builder().message("Invalid Credintial").build(), HttpStatus.NOT_FOUND);
+		if (login == null) {
+			return GenericResponceBuilder.errorMessage(ExceptionData.builder().message("Invalid Credintial").build(),
+					HttpStatus.NOT_FOUND);
+		} else {
+			return GenericResponceBuilder.withData("Login Sucess", login, HttpStatus.OK);
 		}
-		return GenericResponceBuilder.withData("Login Sucess", login, HttpStatus.OK);
-
 	}
 }

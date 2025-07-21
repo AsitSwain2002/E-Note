@@ -16,6 +16,7 @@ import com.org.NoteMakingApp.Dto.LoginRequest;
 import com.org.NoteMakingApp.Dto.LoginResponse;
 import com.org.NoteMakingApp.Dto.MailData;
 import com.org.NoteMakingApp.Dto.UsersDto;
+import com.org.NoteMakingApp.ExceptionHandler.AccountInactiveException;
 import com.org.NoteMakingApp.ExceptionHandler.AlreadyExists;
 import com.org.NoteMakingApp.Repo.RoleRepo;
 import com.org.NoteMakingApp.Repo.UserRepo;
@@ -97,12 +98,19 @@ public class UserServiceImpl implements UserService {
 	public LoginResponse login(LoginRequest loginRequest) {
 		Authentication authenticate = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+		// check account is active or not
+		String email = loginRequest.getEmail();
+		Users user = userRepo.findByEmail(email);
+		
+		if( !user.getUserVerification().getIsActive()) {
+			throw new AccountInactiveException("Account Is Inactive Please Active The Acoount to Login");
+		}
 		if (authenticate.isAuthenticated()) {
 			UserDetlImpl cUser = (UserDetlImpl) authenticate.getPrincipal();
 			String token = jwtService.getToken(cUser.getUser());
 			LoginResponse loginResponse = LoginResponse.builder().user(mapper.map(cUser.getUser(), UsersDto.class))
 					.token(token).build();
-
 			return loginResponse;
 		}
 		return null;

@@ -23,9 +23,9 @@ public class UserDetlImpl implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<SimpleGrantedAuthority> authority =  new ArrayList<>();
+		List<SimpleGrantedAuthority> authority = new ArrayList<>();
 		user.getRoles().stream().forEach(r -> {
-			authority.add(new SimpleGrantedAuthority(r.getName()));
+			authority.add(new SimpleGrantedAuthority("ROLE_"+ r.getName()));
 		});
 		return authority;
 	}
@@ -49,6 +49,5 @@ public class UserDetlImpl implements UserDetails {
 	public void setUser(Users user) {
 		this.user = user;
 	}
-	
 
 }
