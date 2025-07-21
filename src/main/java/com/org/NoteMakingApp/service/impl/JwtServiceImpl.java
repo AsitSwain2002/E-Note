@@ -15,15 +15,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.org.NoteMakingApp.Dto.UsersDto.RoleDto;
+import com.org.NoteMakingApp.ExceptionHandler.JwtTokenExpaired;
+import com.org.NoteMakingApp.ExceptionHandler.JwtTokenInvalid;
 import com.org.NoteMakingApp.config.security.UserDetlImpl;
 import com.org.NoteMakingApp.model.Role;
 import com.org.NoteMakingApp.model.Users;
 import com.org.NoteMakingApp.service.JwtService;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -47,8 +51,9 @@ public class JwtServiceImpl implements JwtService {
 		Map<String, Object> claim = new HashMap<String, Object>();
 		claim.put("role", user.getRoles());
 		claim.put("status", user.getUserVerification().getIsActive());
-		return Jwts.builder().claims().add(claim).subject(user.getEmail()).issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 60 * 60 * 60 + 10)).and().signWith(getKey())
+		return Jwts.builder().claims().add(claim).subject(user.getEmail())
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + 20L * 60 * 60 * 1000)).and().signWith(getKey())
 				.compact();
 	}
 
@@ -65,7 +70,17 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	private Claims extractAllClaims(String token) {
-		return Jwts.parser().verifyWith(decryptKey()).build().parseSignedClaims(token).getPayload();
+		try {
+
+			return Jwts.parser().verifyWith(decryptKey()).build().parseSignedClaims(token).getPayload();
+
+		} catch (SignatureException e) {
+			throw new JwtTokenInvalid("Invalid Token");
+		} catch (ExpiredJwtException e) {
+			throw new JwtTokenExpaired("Token Expaired");
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 
 	private SecretKey decryptKey() {

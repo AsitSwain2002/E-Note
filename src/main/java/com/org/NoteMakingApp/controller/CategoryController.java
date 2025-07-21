@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +34,7 @@ public class CategoryController {
 	private CategoryService categoryService;
 
 	@PostMapping("/save-category")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto)
 			throws AlreadyExists, ResourceNotFoundException {
 		boolean saveCategory = categoryService.saveCategory(categoryDto);
@@ -40,9 +43,11 @@ public class CategoryController {
 		} else {
 			return GenericResponceBuilder.withOutData("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		
 	}
 
 	@GetMapping("/getAllCategory")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> getAllCategory() {
 		List<CategoryDto> findAllCategories = categoryService.findAllCategories();
 		if (!CollectionUtils.isEmpty(findAllCategories)) {
@@ -53,6 +58,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/getAllCategory/active")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getAllActiveCategory() {
 
 		List<CategoryDto> allCategory = categoryService.allActiveCategory();
@@ -60,6 +66,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	public ResponseEntity<?> CategoryById(@PathVariable int id) throws ResourceNotFoundException {
 		CategoryDto category = categoryService.getCategoryById(id);
 		if (ObjectUtils.isEmpty(category)) {
@@ -70,6 +77,7 @@ public class CategoryController {
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> deleteCategoryById(@PathVariable int id) throws ResourceNotFoundException {
 		boolean isDeleted = categoryService.deleteCategoryById(id);
 		if (isDeleted) {
@@ -77,6 +85,6 @@ public class CategoryController {
 		} else {
 			return GenericResponceBuilder.withOutData("Not Deleted", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	} 
 
 }
