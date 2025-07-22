@@ -40,6 +40,7 @@ import com.org.NoteMakingApp.model.FevoriteNote;
 import com.org.NoteMakingApp.model.Filedetails;
 import com.org.NoteMakingApp.model.Notes;
 import com.org.NoteMakingApp.service.NoteService;
+import com.org.NoteMakingApp.util.CommonUtil;
 
 @Service
 public class NoteServiceImpl implements NoteService {
@@ -208,15 +209,15 @@ public class NoteServiceImpl implements NoteService {
 
 	// Recycle Notes
 	@Override
-	public List<NotesDto> recycleNote(int userId) {
-
+	public List<NotesDto> recycleNote() {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Notes> dbfetchedNote = noteRepo.findByCreatedByAndIsDeletedTrue(userId);
 		return dbfetchedNote.stream().map(note -> mapper.map(note, NotesDto.class)).collect(Collectors.toList());
 	}
 
 	@Override
-	public void deleteAllNoteFromRecycle(int userId) {
-
+	public void deleteAllNoteFromRecycle() {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Notes> findByCreatedByAndIsDeletedTrue = noteRepo.findByCreatedByAndIsDeletedTrue(userId);
 		noteRepo.deleteAll(findByCreatedByAndIsDeletedTrue);
 	}
@@ -245,9 +246,13 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public NoteResponse getUserAllNotes(int id, int pageNum, int pageSize) {
+	public NoteResponse getUserAllNotes(int pageNum, int pageSize) {
 		Pageable page = PageRequest.of(pageNum, pageSize);
-		Page<Notes> allNotes = noteRepo.findByCreatedBy(id, page);
+		Integer userId = CommonUtil.getLoggedInUser().getId();
+		System.out.println();
+		System.out.println(userId);
+		System.out.println();
+		Page<Notes> allNotes = noteRepo.findByCreatedBy(userId, page);
 		List<NotesDto> collect = allNotes.stream().map(note -> mapper.map(note, NotesDto.class))
 				.collect(Collectors.toList());
 		NoteResponse notes = NoteResponse.builder().notes(collect).totalElement(allNotes.getTotalElements())
@@ -272,7 +277,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void addToFevorite(int noteId) throws ResourceNotFoundException {
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		Notes notes = noteRepo.findById(noteId)
 				.orElseThrow(() -> new ResourceNotFoundException("Note With ID " + noteId + " Not Found"));
 
@@ -289,7 +294,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<FevoriteNoteDto> allFavNote() {
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<FevoriteNote> findAllByUserId = fevoriteNoteRepo.findAllByUserId(userId);
 		return findAllByUserId.stream().map(e -> mapper.map(e, FevoriteNoteDto.class)).collect(Collectors.toList());
 	}
@@ -297,7 +302,7 @@ public class NoteServiceImpl implements NoteService {
 	// Copy Note logic
 	@Override
 	public boolean copyNote(int id) throws ResourceNotFoundException {
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		Notes notes = noteRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Note With ID " + id + " Not Found"));
 		Notes copyNote = Notes.builder().title(notes.getTitle()).category(notes.getCategory()).filedetails(null)

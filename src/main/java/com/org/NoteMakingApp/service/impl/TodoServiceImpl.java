@@ -16,6 +16,7 @@ import com.org.NoteMakingApp.Validation.TodoValidation;
 import com.org.NoteMakingApp.enums.TodoStatus;
 import com.org.NoteMakingApp.model.Todo;
 import com.org.NoteMakingApp.service.TodoService;
+import com.org.NoteMakingApp.util.CommonUtil;
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -30,7 +31,7 @@ public class TodoServiceImpl implements TodoService {
 	@Override
 	public boolean createTodo(TodoDto todoDto) throws ResourceNotFoundException {
 
-		//Validate Todo
+		// Validate Todo
 		validation.todoStatusValidation(todoDto);
 		Todo todo = mapper.map(todoDto, Todo.class);
 		if (todoDto.getId() != null) {
@@ -52,10 +53,11 @@ public class TodoServiceImpl implements TodoService {
 	@Override
 	public List<TodoDto> allTodoTask() {
 
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Todo> findAllByCreatedBy = todoRepo.findAllByCreatedBy(userId);
-		 List<TodoDto> collect = findAllByCreatedBy.stream().map(e -> mapper.map(e, TodoDto.class)).collect(Collectors.toList());
-		 return collect;
+		List<TodoDto> collect = findAllByCreatedBy.stream().map(e -> mapper.map(e, TodoDto.class))
+				.collect(Collectors.toList());
+		return collect;
 	}
 
 	@Override

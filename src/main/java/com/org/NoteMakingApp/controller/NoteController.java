@@ -61,11 +61,11 @@ public class NoteController {
 		}
 	}
 
-	@GetMapping("user/all-notes/{userId}")
+	@GetMapping("user/all-notes")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> getUserAllNote(@RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
-			@RequestParam(name = "pageSize", defaultValue = "5") int pageSize, @PathVariable int userId) {
-		NoteResponse userAllNotes = noteService.getUserAllNotes(userId, pageNum, pageSize);
+	public ResponseEntity<?> getUserAllNote(@RequestParam(name = "pageNum", defaultValue = "0") int pageNum,
+			@RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
+		NoteResponse userAllNotes = noteService.getUserAllNotes(pageNum, pageSize);
 		if (userAllNotes.getNotes().isEmpty()) {
 			return GenericResponceBuilder.withOutData("No data Found", HttpStatus.OK);
 		} else {
@@ -131,8 +131,8 @@ public class NoteController {
 	@GetMapping("/recycle-note")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> restoreNote() throws ResourceNotFoundException {
-		int userId = 1;
-		List<NotesDto> recycleNote = noteService.recycleNote(userId);
+
+		List<NotesDto> recycleNote = noteService.recycleNote();
 		if (ObjectUtils.isEmpty(recycleNote)) {
 			return GenericResponceBuilder.withOutData("No Note found", HttpStatus.OK);
 		}
@@ -178,8 +178,7 @@ public class NoteController {
 	@DeleteMapping("/delete-allnote-recyclebin")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> deleteAllNoteFromRecycle() throws ResourceNotFoundException {
-		int userId = 1;
-		noteService.deleteAllNoteFromRecycle(userId);
+		noteService.deleteAllNoteFromRecycle();
 		return GenericResponceBuilder.withOutData("All Note Deleted Successfully", HttpStatus.OK);
 	}
 
