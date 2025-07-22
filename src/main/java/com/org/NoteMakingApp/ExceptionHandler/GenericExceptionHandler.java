@@ -11,6 +11,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.org.NoteMakingApp.util.GenericResponceBuilder;
 
 import io.jsonwebtoken.security.SignatureException;
@@ -89,6 +90,12 @@ public class GenericExceptionHandler {
 	}
 	@ExceptionHandler(AuthorizationDeniedException.class)
 	public static ResponseEntity<?> authorizationDeniedException(AuthorizationDeniedException e) {
+		ExceptionData data = ExceptionData.builder().message(e.getMessage()).statusCode(HttpStatus.FORBIDDEN.value())
+				.time(LocalDateTime.now().toString()).build();
+		return GenericResponceBuilder.errorMessage(data, HttpStatus.FORBIDDEN);
+	}
+	@ExceptionHandler(JsonParseException.class)
+	public static ResponseEntity<?> jsonParseException(JsonParseException e) {
 		ExceptionData data = ExceptionData.builder().message(e.getMessage()).statusCode(HttpStatus.FORBIDDEN.value())
 				.time(LocalDateTime.now().toString()).build();
 		return GenericResponceBuilder.errorMessage(data, HttpStatus.FORBIDDEN);

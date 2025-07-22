@@ -20,7 +20,7 @@ public interface NoteService {
 
 	public List<NotesDto> getAllNotes();
 
-	public NoteResponse getUserAllNotes(int id, int pageNum, int pageSize);
+	public NoteResponse getUserAllNotes( int pageNum, int pageSize);
 
 	public NotesDto findNoteById(Integer id) throws ResourceNotFoundException;
 
@@ -34,11 +34,11 @@ public interface NoteService {
 
 	public void restoreNoteById(Integer id) throws ResourceNotFoundException;
 
-	public List<NotesDto> recycleNote(int userId);
+	public List<NotesDto> recycleNote();
 
-	public void hardDeleteNote(int userId) throws ResourceNotFoundException;
+	public void hardDeleteNote(int noteId) throws ResourceNotFoundException;
 
-	public void deleteAllNoteFromRecycle(int userId);
+	public void deleteAllNoteFromRecycle();
 
 	public void addToFevorite(int noteId) throws ResourceNotFoundException;
 

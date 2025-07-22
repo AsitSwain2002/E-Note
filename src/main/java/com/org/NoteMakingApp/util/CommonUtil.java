@@ -1,6 +1,10 @@
 package com.org.NoteMakingApp.util;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.org.NoteMakingApp.config.security.UserDetlImpl;
+import com.org.NoteMakingApp.model.Users;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -31,6 +35,15 @@ public class CommonUtil {
 
 		String baseUrl = url.replace(requestURI, "");
 		return baseUrl;
+	}
+
+	public static Users getLoggedInUser() {
+		try {
+			UserDetlImpl logUser = (UserDetlImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return logUser.getUser();
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 
 }
