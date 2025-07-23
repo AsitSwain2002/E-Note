@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +13,7 @@ import com.org.NoteMakingApp.Dto.LoginRequest;
 import com.org.NoteMakingApp.Dto.LoginResponse;
 import com.org.NoteMakingApp.Dto.UsersDto;
 import com.org.NoteMakingApp.ExceptionHandler.ExceptionData;
-import com.org.NoteMakingApp.service.UserService;
+import com.org.NoteMakingApp.service.AuthService;
 import com.org.NoteMakingApp.util.CommonUtil;
 import com.org.NoteMakingApp.util.GenericResponceBuilder;
 
@@ -26,13 +24,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class AuthController {
 
 	@Autowired
-	private UserService userService;
+	private AuthService authService;
 
 	@PostMapping("/save-user")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> saveUser(@RequestBody UsersDto usersDto, HttpServletRequest req) throws Exception {
 		String reqUrl = CommonUtil.getUrl(req);
-		boolean registerUser = userService.registerUser(usersDto, reqUrl);
+		boolean registerUser = authService.registerUser(usersDto, reqUrl);
 		if (registerUser) {
 			return GenericResponceBuilder.withOutData("Register Successfully", HttpStatus.OK);
 		} else {
@@ -43,7 +41,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) throws Exception {
-		LoginResponse login = userService.login(loginRequest);
+		LoginResponse login = authService.login(loginRequest);
 		if (login == null) {
 			return GenericResponceBuilder.errorMessage(ExceptionData.builder().message("Invalid Credintial").build(),
 					HttpStatus.NOT_FOUND);
