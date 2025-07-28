@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.org.NoteMakingApp.Dto.UserRequest;
 import com.org.NoteMakingApp.Dto.UserResponse;
 import com.org.NoteMakingApp.Repo.UserRepo;

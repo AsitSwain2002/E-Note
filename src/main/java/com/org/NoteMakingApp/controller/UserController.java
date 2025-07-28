@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.NoteMakingApp.Dto.UserRequest;
 import com.org.NoteMakingApp.Dto.UserResponse;
 import com.org.NoteMakingApp.service.UserService;
 import com.org.NoteMakingApp.util.GenericResponceBuilder;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -31,4 +34,5 @@ public class UserController {
 		userService.resetPassword(userRequest);
 		return GenericResponceBuilder.withOutData("Password Reset Succesfully", HttpStatus.OK);
 	}
+
 }

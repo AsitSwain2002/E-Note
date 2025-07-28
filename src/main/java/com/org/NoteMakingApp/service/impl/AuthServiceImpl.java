@@ -27,7 +27,10 @@ import com.org.NoteMakingApp.model.UserVerification;
 import com.org.NoteMakingApp.model.Users;
 import com.org.NoteMakingApp.service.AuthService;
 import com.org.NoteMakingApp.service.JwtService;
+import com.org.NoteMakingApp.util.CommonUtil;
 import com.org.NoteMakingApp.util.MailService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -74,7 +77,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	private void sendMail(Users user, String reqUrl) throws Exception {
-
+       
 		String message = "Hi, <b> [[userName]] </b> <br><br>" + "Your Account Created Sucessfully"
 				+ "<br>Click the below link to account verify <br>" + "<a href='[[url]]'>Click here</a> <br><br>"
 				+ "Thanks, <br>" + "Enote.com";
@@ -123,5 +126,6 @@ public class AuthServiceImpl implements AuthService {
 		user.setRoles(roles);
 
 	}
+
 
 }

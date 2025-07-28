@@ -23,5 +23,6 @@ public class UserVerification {
 	private int id;
 	private Boolean isActive;
 	private String verificationCode;
+	private String password_verification;
 
 }

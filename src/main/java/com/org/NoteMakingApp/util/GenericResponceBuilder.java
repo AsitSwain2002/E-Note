@@ -1,6 +1,5 @@
 package com.org.NoteMakingApp.util;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
