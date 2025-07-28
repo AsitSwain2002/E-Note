@@ -19,10 +19,10 @@ public class NotesDto {
 	private String title;
 	private String description;
 	private CategoryDto category;
-	private int created_by;
-	private Date created_on;
-	private int update_by;
-	private Date update_on;
+	private int createdBy;
+	private Date createdOn;
+	private int updateBy;
+	private Date updateOn;
 	private boolean isDeleted;
 	private FiledetailsDto filedetails;
 	private LocalDateTime deletedOn;

@@ -20,7 +20,7 @@ public interface NoteService {
 
 	public List<NotesDto> getAllNotes();
 
-	public NoteResponse getUserAllNotes( int pageNum, int pageSize);
+	public NoteResponse getUserAllNotes(int pageNum, int pageSize);
 
 	public NotesDto findNoteById(Integer id) throws ResourceNotFoundException;
 
@@ -47,5 +47,7 @@ public interface NoteService {
 	public List<FevoriteNoteDto> allFavNote();
 
 	public boolean copyNote(int id) throws ResourceNotFoundException;
+
+	public NoteResponse searchNote(String value, int pageNum, int pageSize);
 
 }
