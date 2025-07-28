@@ -41,7 +41,7 @@ public class TodoValidation {
 				}
 			}
 			if (!statusFound) {
-				error.put("Status", "nvalid Status");
+				error.put("Status", "Invalid Status");
 			}
 		}
 

@@ -49,4 +49,6 @@ public class AuthController {
 			return GenericResponceBuilder.withData("Login Sucess", login, HttpStatus.OK);
 		}
 	}
+	
+	
 }

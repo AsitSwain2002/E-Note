@@ -10,6 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface AuthService {
 
 	public boolean registerUser(UsersDto userdto, String reqUrl) throws AlreadyExists, Exception;
-	
+
 	public LoginResponse login(LoginRequest loginRequest);
 }
