@@ -39,6 +39,7 @@ import com.org.NoteMakingApp.model.Category;
 import com.org.NoteMakingApp.model.FevoriteNote;
 import com.org.NoteMakingApp.model.Filedetails;
 import com.org.NoteMakingApp.model.Notes;
+import com.org.NoteMakingApp.model.Users;
 import com.org.NoteMakingApp.service.NoteService;
 import com.org.NoteMakingApp.util.CommonUtil;
 
@@ -316,6 +317,22 @@ public class NoteServiceImpl implements NoteService {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public NoteResponse searchNote(String value, int pageNum, int pageSize) {
+
+		Users user = CommonUtil.getLoggedInUser();
+		Pageable of = PageRequest.of(pageNum, pageSize);
+		Page<Notes> repoNote = noteRepo.findByTitleContainingAndIsDeletedFalseAndCreatedBy(value, user.getId(), of);
+		List<NotesDto> collect = repoNote.stream().map(note -> mapper.map(note, NotesDto.class))
+				.collect(Collectors.toList());
+
+		NoteResponse notes = NoteResponse.builder().notes(collect).totalElement(repoNote.getTotalElements())
+				.totalPages(repoNote.getTotalPages()).pageNumber(repoNote.getNumber()).pageSize(repoNote.getSize())
+				.isFirstPage(repoNote.isFirst()).isLastPage(repoNote.isLast()).build();
+
+		return notes;
 	}
 
 }

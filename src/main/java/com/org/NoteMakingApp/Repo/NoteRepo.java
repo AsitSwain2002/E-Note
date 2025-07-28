@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.org.NoteMakingApp.model.Notes;
+import com.org.NoteMakingApp.model.Users;
 
 @Repository
 public interface NoteRepo extends JpaRepository<Notes, Integer> {
@@ -25,5 +26,6 @@ public interface NoteRepo extends JpaRepository<Notes, Integer> {
 
 	List<Notes> findAllByIsDeletedAndDeletedOnBefore(boolean b, LocalDateTime autoDeleteDays);
 
+	Page<Notes> findByTitleContainingAndIsDeletedFalseAndCreatedBy(String value, Integer id, Pageable of);
+
 }
- 

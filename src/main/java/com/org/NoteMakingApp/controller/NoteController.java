@@ -193,4 +193,14 @@ public class NoteController {
 		return GenericResponceBuilder.withOutData("Something wnt wrong ! Please try again",
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@GetMapping("/search")
+	public ResponseEntity<?> searchNote(@RequestParam String key, @RequestParam(defaultValue = "0") int pageNum,
+			@RequestParam(defaultValue = "10") int pageSize) throws ResourceNotFoundException {
+		 NoteResponse searchNote = noteService.searchNote(key,pageNum,pageSize);
+		if (!ObjectUtils.isEmpty(searchNote)) {
+			return GenericResponceBuilder.withData("Note Fetched", searchNote, HttpStatus.OK);
+		}
+		return GenericResponceBuilder.withOutData("No Note Found", HttpStatus.NO_CONTENT);
+	}
 }
