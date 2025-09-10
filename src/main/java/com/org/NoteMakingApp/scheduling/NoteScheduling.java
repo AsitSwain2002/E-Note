@@ -18,8 +18,7 @@ public class NoteScheduling {
 
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteNoteScheduler() {
-
-		// get the day from the  delete date
+		// get the day from the delete date
 		LocalDateTime autoDeleteDays = LocalDateTime.now().minusDays(7);
 		List<Notes> deleteNotes = noteRepo.findAllByIsDeletedAndDeletedOnBefore(true, autoDeleteDays);
 		noteRepo.deleteAll(deleteNotes);

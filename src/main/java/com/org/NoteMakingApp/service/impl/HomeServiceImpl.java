@@ -96,7 +96,7 @@ public class HomeServiceImpl implements HomeService {
 		Users user = userRepo.findById(password.getUserId()).orElseThrow(
 				() -> new ResourceNotFoundException("User With Id: " + password.getUserId() + " Not Found"));
 
-		if ((!StringUtils.hasText(password.getPassword()) || password.getPassword().length() < 8)) {
+		if ((!StringUtils.hasText(password.getPassword()) || password.getPassword().length() >= 6)) {
 			throw new IllegalArgumentException("Invalid Password");
 		}
 		user.setPassword(encoder.encode(password.getPassword()));
